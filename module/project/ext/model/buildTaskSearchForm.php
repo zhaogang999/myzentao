@@ -1,0 +1,24 @@
+<?php
+/**
+ * Build task search form.
+ *
+ * @param  int    $projectID
+ * @param  array  $projects
+ * @param  int    $queryID
+ * @param  string $actionURL
+ * @access public
+ * @return void
+ */
+public function buildTaskSearchForm($projectID, $projects, $queryID, $actionURL)
+{
+    $this->config->project->search['actionURL'] = $actionURL;
+    $this->config->project->search['queryID']   = $queryID;
+    //搜索框实现多项目下任务的搜索16-20
+    //$this->config->project->search['params']['project']['values'] = array(''=>'', $projectID => $projects[$projectID], 'all' => $this->lang->project->allProject);
+    $this->config->project->search['params']['project']['values'] = array(''=>'', 'all' => $this->lang->project->allProject);
+    $this->config->project->search['params']['project']['values'] = $this->config->project->search['params']['project']['values'] +  $projects;
+
+    $this->config->project->search['params']['module']['values']  = $this->loadModel('tree')->getTaskOptionMenu($projectID, $startModuleID = 0);
+
+    $this->loadModel('search')->setSearchParams($this->config->project->search);
+}
