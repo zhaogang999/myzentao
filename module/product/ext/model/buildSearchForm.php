@@ -18,8 +18,9 @@ public function buildSearchForm($productID, $products, $queryID, $actionURL)
     //$this->config->product->search['params']['product']['values'] = array('all' => $this->lang->product->allProduct, $productID => $products[$productID]);
     $this->config->product->search['params']['product']['values'] = array($productID => $products[$productID], 'all' => $this->lang->product->allProduct);
     $this->config->product->search['params']['product']['values'] += $products;
+    //优化搜索功能增加空选项；
+    $this->config->product->search['params']['module']['values']  = array('' => '') + $this->loadModel('tree')->getOptionMenu($productID, $viewType = 'story', $startModuleID = 0);
 
-    $this->config->product->search['params']['module']['values']  = $this->loadModel('tree')->getOptionMenu($productID, $viewType = 'story', $startModuleID = 0);
     if($this->session->currentProductType == 'normal')
     {
         unset($this->config->product->search['fields']['branch']);
@@ -28,6 +29,7 @@ public function buildSearchForm($productID, $products, $queryID, $actionURL)
     else
     {
         $this->config->product->search['fields']['branch'] = $this->lang->product->branch;
+        //改为默认为所有平台
         $this->config->product->search['params']['branch']['values']  = array('' => '') + $this->loadModel('branch')->getPairs($productID, 'noempty') + array('all' => $this->lang->branch->all);
     }
 

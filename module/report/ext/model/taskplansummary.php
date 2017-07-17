@@ -61,13 +61,14 @@ public function taskPlanSummary()
     foreach ($sum as $value) {
         $tasksum[$value->project]['taskCount'] = $value->taskCount;
         $tasksum[$value->project]['name'] = $value->name;
-        $tasksum[$value->project]['taskIDs'] = $value->ids;
     }
     foreach ($delay as $value) {
         $tasksum[$value->project]['delayTaskCount'] = $value->taskCount;
+        $tasksum[$value->project]['delayTaskIDs'] = $value->ids;
     }
     foreach ($plan as $value) {
         $tasksum[$value->project]['planTaskCount'] = $value->taskCount;
+        $tasksum[$value->project]['planTaskIDs'] = $value->ids;
     }
 
     return $tasksum;

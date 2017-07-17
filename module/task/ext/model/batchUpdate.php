@@ -66,6 +66,8 @@ public function batchUpdate()
         $task->consumed       = $oldTask->consumed;
         //禅道任务增加关键字字段；需求：858 批量添加任务，批量编辑任务增加关键字字段;行：67-68
         $task->keywords       = $data->keywords[$taskID];
+        //需求1340 任务点击完成时，开启时间和完成时间改为必填项。
+        $task->realStarted    = $data->realStarted[$taskID];
 
         if($data->consumeds[$taskID])
         {
@@ -91,6 +93,10 @@ public function batchUpdate()
         {
             case 'done':
             {
+                //需求1340 任务点击完成时，开启时间和完成时间改为必填项。
+                if ($task->type == 'review') die(js::error($this->lang->task->error->reviewError));
+                if ($task->realStarted =='0000-00-00') die(js::error($this->lang->task->error->doneError));
+                
                 $task->left = 0;
                 if(!$task->finishedBy)   $task->finishedBy = $this->app->user->account;
                 if($task->closedReason)  $task->closedDate = $now;

@@ -22,7 +22,8 @@
             <th class="w-id"><?php echo $lang->report->adjustTaskCount;?></th>
             <th class="w-id"><?php echo $lang->report->delayTaskCount;?></th>
             <th class="w-id"><?php echo $lang->report->planTaskCount;?></th>
-            <th><?php echo $lang->report->taskIDs;?></th>
+            <th width="475"><?php echo $lang->report->delayTaskIDs;?></th>
+            <th width="475"><?php echo $lang->report->planTaskIDs;?></th>
         </tr>
     </thead>
     <tbody>
@@ -33,7 +34,8 @@
         <td align="center"><?php echo $project['taskCount'];?></td>
         <td align="center"><?php echo isset($project['delayTaskCount'])?$project['delayTaskCount']:0;?></td>
           <td align="center"><?php echo isset($project['planTaskCount'])?$project['planTaskCount']:0;?></td>
-          <td><?php echo isset($project['taskIDs'])?$project['taskIDs']:0;?></td>
+          <td><?php echo isset($project['delayTaskIDs'])?$project['delayTaskIDs']:0;?></td>
+          <td><?php echo isset($project['planTaskIDs'])?$project['planTaskIDs']:0;?></td>
       </tr>
     <?php endforeach;?>
     </tbody>

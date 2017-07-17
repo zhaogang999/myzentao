@@ -1,6 +1,6 @@
 <?php
 //权限控制
-$lang->resource->story->batchChangeProject = 'batchChangeProject';//新增
+$lang->resource->project->batchChangeProject = 'batchChangeProject';//新增
 $lang->resource->task->deleteAudit = 'deleteAudit';//新增
 $lang->resource->task->deleteReview = 'deleteReview';
 $lang->resource->report->bugSummary = 'bugSummary';

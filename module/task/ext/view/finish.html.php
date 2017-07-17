@@ -35,8 +35,12 @@
       <td><?php echo html::select('assignedTo', $members, $task->openedBy, "class='form-control chosen'");?></td><td></td>
     </tr>
     <tr>
+      <th><?php echo $lang->task->realStarted;?></th>
+      <td><div class="required required-wrapper">::after</div><div class='datepicker-wrapper'><?php echo html::input('realStarted', $task->realStarted, "class='form-control form-date'");?></div></td><td></td>
+    </tr>
+    <tr>
       <th><?php echo $lang->task->finishedDate;?></th>
-      <td><div class='datepicker-wrapper'><?php echo html::input('finishedDate', helper::today(), "class='form-control form-date'");?></div></td><td></td>
+      <td><div class="required required-wrapper">::after</div><div class='datepicker-wrapper'><?php echo html::input('finishedDate', helper::today(), "class='form-control form-date'");?></div></td><td></td>
     </tr>
     <tr>
       <th><?php echo $lang->files;?></th>

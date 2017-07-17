@@ -10,6 +10,13 @@ class myProject extends project
         foreach ($storyIDList as $storyID)
         {
             //需求转项目
+            //如果需求已经被关联到另一个项目；先取消关联再转移需求
+            $project = $this->dao->select('*')->from(TABLE_PROJECTSTORY)->where('story')->eq($storyID)->andWhere('project')->eq($projectID)->fetch();
+            if ($project)
+            {
+                $this->dao->delete()->from(TABLE_PROJECTSTORY)->where('story')->eq($storyID)->andWhere('project')->eq($projectID)->exec();
+            }
+
             $this->dao->update(TABLE_PROJECTSTORY)
                 ->set('project')->eq($projectID)
                 ->where('story')->eq($storyID)
@@ -17,6 +24,7 @@ class myProject extends project
                 ->limit(1)->exec();
            if (!dao::isError())
             {
+                $this->loadModel('story')->setStage($storyID);
                 $this->dao->update(TABLE_ACTION)
                     ->set('project')->eq($projectID)
                     ->set('extra')->eq($projectID)
@@ -82,7 +90,7 @@ class myProject extends project
                         ->fetchAll();
                     foreach ($tasks as $task)
                     {
-                        if ($task->assignedTo == '') continue;
+                        if ($task->assignedTo == '' || $task->assignedTo == 'closed') continue;
                         $isMember = $this->dao->select('*')->from(TABLE_TEAM)
                                     ->where('project')->eq($projectID)
                                     ->andWhere('account')->eq($task->assignedTo)

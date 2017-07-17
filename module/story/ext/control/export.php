@@ -69,18 +69,30 @@ class mystory extends story
             $relatedModules = $this->dao->select('id, name')->from(TABLE_MODULE)->where('id')->in($relatedModuleIdList)->fetchPairs();
             $relatedPlans   = $this->dao->select('id, title')->from(TABLE_PRODUCTPLAN)->where('id')->in(join(',', $relatedPlanIdList))->fetchPairs();
             $relatedStories = $this->dao->select('id,title')->from(TABLE_STORY) ->where('id')->in($relatedStoryIdList)->fetchPairs();
-            $relatedFiles   = $this->dao->select('id, objectID, pathname, title')->from(TABLE_FILE)->where('objectType')->eq('story')->andWhere('objectID')->in(@array_keys($stories))->fetchGroup('objectID');
+            $relatedFiles   = $this->dao->select('id, objectID, pathname, title')->from(TABLE_FILE)->where('objectType')->eq('story')->andWhere('objectID')->in(@array_keys($stories))->andWhere('extra')->ne('editor')->fetchGroup('objectID');
             $relatedSpecs   = $this->dao->select('*')->from(TABLE_STORYSPEC)->where('`story`')->in(@array_keys($stories))->orderBy('version desc')->fetchGroup('story');
             $relatedBranch  = array('0' => $this->lang->branch->all) + $this->dao->select('id, name')->from(TABLE_BRANCH)->where('id')->in($relatedBranchIdList)->fetchPairs();
-
+            
             //需求1197 项目需求导出时，增加TBC字段的内容；
-            /* Count T B C */
-            $storiesAB = $this->loadModel('story')->getProjectStories($projectID);
-            $storyIdList = array_keys($storiesAB);
-            $taskCount = $this->loadModel('task')->getStoryTaskCounts($storyIdList,$projectID);
-            $bugCount  = $this->loadModel('bug')->getStoryBugCounts($storyIdList,$projectID);
-            $caseCount = $this->loadModel('testcase')->getStoryCaseCounts($storyIdList);
-
+            if ($projectID != 0)
+            {
+                /* Count T B C */
+                $storiesAB = $this->loadModel('story')->getProjectStories($projectID);
+                $storyIdList = array_keys($storiesAB);
+                $taskCount = $this->loadModel('task')->getStoryTaskCounts($storyIdList,$projectID);
+                $bugCount  = $this->loadModel('bug')->getStoryBugCounts($storyIdList,$projectID);
+                $caseCount = $this->loadModel('testcase')->getStoryCaseCounts($storyIdList);
+            }
+            else
+            {
+                /* Get related tasks, bugs, cases count of each story. */
+                $storyIdList = array();
+                foreach($stories as $story) $storyIdList[$story->id] = $story->id;
+                $taskCount = $this->loadModel('task')->getStoryTaskCounts($storyIdList);
+                $bugCount  = $this->loadModel('bug')->getStoryBugCounts($storyIdList);
+                $caseCount = $this->loadModel('testcase')->getStoryCaseCounts($storyIdList);
+            }
+            
             foreach($stories as $story)
             {
                 $story->spec   = '';
@@ -202,11 +214,9 @@ class mystory extends story
             $this->post->set('kind', 'story');
             $this->fetch('file', 'export2' . $this->post->fileType, $_POST);
         }
+
         //需求1197 项目需求导出时，增加TBC字段的内容；如果是项目下需求导出，增加T,B,C字段；
-        if ($projectID!=0)
-        {
             $this->config->story->list->exportFields = str_replace('stage,', 'stage, taskCountAB, bugCountAB, caseCountAB,', $this->config->story->list->exportFields);
-        }
 
         $this->view->allExportFields = $this->config->story->list->exportFields;
         $this->view->customExport    = true;

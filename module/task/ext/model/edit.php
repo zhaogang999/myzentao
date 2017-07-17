@@ -64,7 +64,15 @@ public function update($taskID)
         ->join('mailto', ',')
         ->remove('comment,files,labels,uid')
         ->get();
-
+    //需求1340 任务点击完成时，开启时间和完成时间改为必填项。
+    if($task->status == 'done' || $task->status == 'doing')
+    {
+        if ($task->realStarted =='0000-00-00')
+        {
+            die(js::error($this->lang->task->error->doneError));
+        }
+    }
+    
     if($task->consumed < $oldTask->consumed)
     {
         die(js::error($this->lang->task->error->consumedSmall));

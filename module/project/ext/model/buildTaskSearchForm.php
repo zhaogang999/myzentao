@@ -17,8 +17,8 @@ public function buildTaskSearchForm($projectID, $projects, $queryID, $actionURL)
     //$this->config->project->search['params']['project']['values'] = array(''=>'', $projectID => $projects[$projectID], 'all' => $this->lang->project->allProject);
     $this->config->project->search['params']['project']['values'] = array(''=>'', 'all' => $this->lang->project->allProject);
     $this->config->project->search['params']['project']['values'] = $this->config->project->search['params']['project']['values'] +  $projects;
-
-    $this->config->project->search['params']['module']['values']  = $this->loadModel('tree')->getTaskOptionMenu($projectID, $startModuleID = 0);
+//优化搜索功能增加空选项；
+    $this->config->project->search['params']['module']['values']  = array('' => '') + $this->loadModel('tree')->getTaskOptionMenu($projectID, $startModuleID = 0);
 
     $this->loadModel('search')->setSearchParams($this->config->project->search);
 }

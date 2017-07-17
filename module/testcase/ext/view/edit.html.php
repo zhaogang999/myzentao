@@ -60,23 +60,16 @@
                     <textarea rows='1' class='form-control autosize step-steps' name='steps[]'></textarea>
                     <span class="input-group-addon step-type-toggle">
                       <input type='hidden' name='stepType[]' value='item' class='step-type'>
-                      <div class='step-type-menu-box'>
-                        <div class='step-type-current'><span></span> <i class='caret'></i></div>
-                        <div class='step-type-menu'>
-                          <a href='javascript:;' href='step-type-option' data-value='step'><?php echo $lang->testcase->step ?></a>
-                          <a href='javascript:;' href='step-type-option' data-value='group'><?php echo $lang->testcase->group ?></a>
-                          <a href='javascript:;' href='step-type-option' data-value='item'><?php echo $lang->testcase->stepChild ?></a>
-                        </div>
-                      </div>
+                      <label class="checkbox-inline"><input tabindex='-1' type="checkbox" class='step-group-toggle'> <?php echo $lang->testcase->group ?></label>
                     </span>
                   </div>
                 </td>
                 <td><textarea rows='1' class='form-control autosize step-expects' name='expects[]'></textarea></td>
                 <td class='step-actions'>
                   <div class='btn-group'>
-                    <button type='button' class='btn btn-step-add'><i class='icon icon-plus'></i></button>
-                    <button type='button' class='btn btn-step-move'><i class='icon icon-move'></i></button>
-                    <button type='button' class='btn btn-step-delete'><i class='icon icon-remove'></i></button>
+                    <button type='button' class='btn btn-step-add' tabindex='-1'><i class='icon icon-plus'></i></button>
+                    <button type='button' class='btn btn-step-move' tabindex='-1'><i class='icon icon-move'></i></button>
+                    <button type='button' class='btn btn-step-delete' tabindex='-1'><i class='icon icon-remove'></i></button>
                   </div>
                 </td>
               </tr>
@@ -89,28 +82,21 @@
                     <?php echo html::textarea('steps[]', $step->desc, "rows='8' class='form-control autosize step-steps'") ?>
                     <span class='input-group-addon step-type-toggle'>
                       <?php if(!isset($step->type)) $step->type = 'step';?>
-                      <input type='hidden' name='stepType[]' value='<?php echo $step->type ?>' class='step-type'>
-                      <div class='step-type-menu-box'>
-                        <div class='step-type-current'><span></span> <i class='caret'></i></div>
-                        <div class='step-type-menu'>
-                          <a href='javascript:;' href='step-type-option' data-value='step'><?php echo $lang->testcase->step ?></a>
-                          <a href='javascript:;' href='step-type-option' data-value='group'><?php echo $lang->testcase->group ?></a>
-                          <a href='javascript:;' href='step-type-option' data-value='item'><?php echo $lang->testcase->stepChild ?></a>
-                        </div>
-                      </div>
+                      <input type='hidden' name='stepType[]' value='<?php echo $step->type;?>' class='step-type'>
+                      <label class="checkbox-inline"><input tabindex='-1' tabindex='-1' type="checkbox" class='step-group-toggle'<?php if($step->type === 'group') echo ' checked' ?>> <?php echo $lang->testcase->group ?></label>
                     </span>
                   </div>
                 </td>
                 <td>
                   <!--增加富文本编辑器-->
                   <textarea id=<?php echo 'expects'.$stepID;?> class='form-control' name='expects[]' rows='1'><?php echo $step->expect;?></textarea>
-                  
+
                 </td>
                 <td class='step-actions'>
                   <div class='btn-group'>
-                    <button type='button' class='btn btn-step-add'><i class='icon icon-plus'></i></button>
-                    <button type='button' class='btn btn-step-move'><i class='icon icon-move'></i></button>
-                    <button type='button' class='btn btn-step-delete'><i class='icon icon-remove'></i></button>
+                    <button type='button' class='btn btn-step-add' tabindex='-1'><i class='icon icon-plus'></i></button>
+                    <button type='button' class='btn btn-step-move' tabindex='-1'><i class='icon icon-move'></i></button>
+                    <button type='button' class='btn btn-step-delete' tabindex='-1'><i class='icon icon-remove'></i></button>
                   </div>
                 </td>
               </tr>
@@ -149,6 +135,24 @@
               </div>
             </td>
           </tr>
+          <tr>
+            <th><?php echo $lang->testcase->module;?></th>
+            <td>
+              <div class='input-group' id='moduleIdBox'>
+              <?php 
+              echo html::select('module', $moduleOptionMenu, $currentModuleID, "onchange='loadModuleRelated()' class='form-control chosen'");
+              if(count($moduleOptionMenu) == 1)
+              {
+                  echo "<span class='input-group-addon'>";
+                  echo html::a($this->createLink('tree', 'browse', "rootID=$libID&view=caselib&currentModuleID=0&branch=$case->branch"), $lang->tree->manage, '_blank');
+                  echo '&nbsp; ';
+                  echo html::a("javascript:loadLibModules($libID)", $lang->refresh);
+                  echo '</span>';
+              }
+              ?>
+              </div>
+            </td>
+          </tr>
           <?php else:?>
           <tr>
             <th class='w-80px'><?php echo $lang->testcase->product;?></th>
@@ -159,7 +163,6 @@
               </div>
             </td>
           </tr>
-          <?php endif;?>
           <tr>
             <th><?php echo $lang->testcase->module;?></th>
             <td>
@@ -178,7 +181,8 @@
               </div>
             </td>
           </tr>
-          <?php if(!$isLibCase):?>
+          <?php endif;?>
+          <?php if(!$isLibCase and $this->config->global->flow != 'onlyTest'):?>
           <tr>
             <th><?php echo $lang->testcase->story;?></th>
             <td class='text-left'><div id='storyIdBox'><?php echo html::select('story', $stories, $case->story, 'class=form-control chosen');?></div>
